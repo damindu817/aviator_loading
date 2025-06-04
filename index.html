@@ -6,7 +6,31 @@
   <title>Xtreme Aviator Predictor</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
-    /* Loading Screen Styles */
+    /* Reset and Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: none;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #000;
+      font-family: 'Segoe UI', sans-serif;
+      position: fixed;
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+    }
+
+    /* Loading Screen Styles - Fixed and Non-scrollable */
     .loader-page {
       position: fixed;
       top: 0;
@@ -18,12 +42,15 @@
       justify-content: center;
       align-items: center;
       z-index: 1000;
+      overflow: hidden;
+      touch-action: none;
     }
 
     .loader-container {
       position: relative;
       width: 150px;
       height: 150px;
+      touch-action: none;
     }
 
     .loader-icon {
@@ -65,9 +92,8 @@
       }
     }
 
-    /* Tips Page Styles */
+    /* Tips Page Styles - Fixed and Non-scrollable */
     .tips-page {
-      display: none;
       position: fixed;
       top: 0;
       left: 0;
@@ -76,11 +102,14 @@
       background: #0c0c0c;
       font-family: 'Segoe UI', sans-serif;
       color: #e0e0e0;
+      display: none;
       justify-content: center;
       align-items: center;
       padding: 20px;
       box-sizing: border-box;
       z-index: 900;
+      overflow: hidden;
+      touch-action: none;
       animation: fadeInBody 1.2s ease-in-out;
     }
 
@@ -98,6 +127,8 @@
       box-shadow: 0 0 30px rgba(255, 23, 68, 0.4);
       border: 1px solid #2a2a2a;
       animation: fadeInCard 1.5s ease-in-out;
+      touch-action: none;
+      overflow: hidden;
     }
 
     @keyframes fadeInCard {
@@ -164,6 +195,7 @@
       transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
       animation: fadeInTip 2.2s ease-in-out;
       text-decoration: none;
+      touch-action: manipulation;
     }
 
     .btn:hover {
@@ -175,28 +207,10 @@
       box-shadow: 0 0 18px 4px rgba(255, 23, 68, 0.5);
       transform: scale(1);
     }
-
-    /* Prevent text selection and zooming */
-    * {
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    html, body {
-      touch-action: manipulation;
-      -webkit-text-size-adjust: 100%;
-      -ms-text-size-adjust: 100%;
-      overflow: hidden;
-      height: 100%;
-      width: 100%;
-    }
   </style>
 </head>
 <body>
-  <!-- Loading Page -->
+  <!-- Loading Page - Fixed Position -->
   <div class="loader-page" id="loaderPage">
     <div class="loader-container">
       <svg class="progress-ring" width="150" height="150">
@@ -207,7 +221,7 @@
     </div>
   </div>
 
-  <!-- Tips Page (hidden initially) -->
+  <!-- Tips Page - Fixed Position -->
   <div class="tips-page" id="tipsPage">
     <div class="tips-container">
       <h1>Smart Play උපදෙස්</h1>
@@ -249,6 +263,11 @@
     document.addEventListener('paste', function(e) {
       e.preventDefault();
     });
+
+    // Disable scrolling completely
+    document.addEventListener('touchmove', function(e) {
+      e.preventDefault();
+    }, { passive: false });
 
     // After loading animation completes, show tips page
     document.getElementById("progressBar").addEventListener("animationend", function() {
