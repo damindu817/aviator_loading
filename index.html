@@ -195,21 +195,23 @@
       width: 40px;
       height: 40px;
       background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
-      border-radius: 50%;
+      border-radius: 8px;
       display: flex;
       justify-content: center;
       align-items: center;
       margin-right: 15px;
       flex-shrink: 0;
       box-shadow: 0 0 10px rgba(255, 23, 68, 0.4);
+      transform: rotate(45deg);
     }
     
-    .icon-warning {
+    .icon-diamond {
       width: 24px;
       height: 24px;
       background-color: white;
-      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2L1 21h22L12 2zm0 3.5L19.5 19h-15L12 5.5zM12 16c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1zm-1-4V9h2v3h-2z' fill='white'/%3E%3C/svg%3E") no-repeat center;
-      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2L1 21h22L12 2zm0 3.5L19.5 19h-15L12 5.5zM12 16c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1zm-1-4V9h2v3h-2z' fill='white'/%3E%3C/svg%3E") no-repeat center;
+      transform: rotate(-45deg);
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2L5 12l7 10 7-10L12 2zm0 3.6L16.4 12 12 18.4 7.6 12 12 5.6z' fill='white'/%3E%3C/svg%3E") no-repeat center;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2L5 12l7 10 7-10L12 2zm0 3.6L16.4 12 12 18.4 7.6 12 12 5.6z' fill='white'/%3E%3C/svg%3E") no-repeat center;
     }
     
     .tips-title {
@@ -407,7 +409,7 @@
     <div class="tips-container">
       <div class="tips-header">
         <div class="tips-icon">
-          <div class="icon-warning"></div>
+          <div class="icon-diamond"></div>
         </div>
         <h1 class="tips-title">Smart Play උපදෙස්</h1>
       </div>
