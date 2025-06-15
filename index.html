@@ -2,289 +2,526 @@
 <html lang="si">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Xtreme Aviator Predictor</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
-    /* Reset and Base Styles */
+    :root {
+      --primary: #ff1744;
+      --primary-dark: #d50000;
+      --secondary: #ff1744;
+      --secondary-dark: #d50000;
+      --bg-dark: #0b0c2a;
+      --card-bg: #1a1b3a;
+      --text-light: #f0f0f0;
+      --text-muted: #b0b0b0;
+    }
+    
+    /* Base Styles */
     * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
       -webkit-user-select: none;
       -moz-user-select: none;
       -ms-user-select: none;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
-      touch-action: none;
     }
-
+    
     html, body {
-      width: 100%;
       height: 100%;
+      background-color: var(--bg-dark);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       overflow: hidden;
-      background-color: #000;
-      font-family: 'Segoe UI', sans-serif;
-      position: fixed;
-      -webkit-text-size-adjust: 100%;
-      -ms-text-size-adjust: 100%;
+      touch-action: none;
+      color: var(--text-light);
     }
-
-    /* Loading Screen Styles - Fixed and Non-scrollable */
-    .loader-page {
+    
+    /* Loading Screen */
+    .loading-screen {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: #000;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       z-index: 1000;
-      overflow: hidden;
-      touch-action: none;
+      background: linear-gradient(135deg, #07081f 0%, #0b0c2a 100%);
     }
-
+    
     .loader-container {
       position: relative;
-      width: 150px;
-      height: 150px;
-      touch-action: none;
+      width: 180px;
+      height: 180px;
+      margin-bottom: 30px;
     }
-
+    
+    .progress-ring {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+      filter: drop-shadow(0 0 8px rgba(255, 23, 68, 0.6));
+    }
+    
+    .progress-ring circle {
+      fill: none;
+      stroke-width: 8;
+      stroke-linecap: round;
+    }
+    
+    .progress-bg {
+      stroke: rgba(255, 23, 68, 0.1);
+    }
+    
+    .progress-bar {
+      stroke: url(#gradient);
+      stroke-dasharray: 565;
+      stroke-dashoffset: 565;
+      animation: loadRing 3.5s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+    }
+    
     .loader-icon {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 3em;
-      color: #FF1744;
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       z-index: 2;
+      animation: pulse 1.8s infinite alternate;
+      box-shadow: 0 0 20px rgba(255, 23, 68, 0.4);
     }
-
-    .progress-ring {
+    
+    .loader-icon::before {
+      content: "";
+      position: absolute;
       width: 100%;
       height: 100%;
-      transform: rotate(-90deg);
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      animation: shine 3s infinite;
+      z-index: -1;
     }
-
-    .progress-ring circle {
-      fill: none;
-      stroke-width: 6;
-      stroke-linecap: butt;
+    
+    .fa-paper-plane {
+      color: white;
+      font-size: 40px;
+      transform: rotate(45deg);
     }
-
-    .progress-bg {
-      stroke: #333;
+    
+    .loading-text {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--primary);
+      text-align: center;
+      opacity: 0;
+      animation: fadeIn 1s ease 1s forwards;
     }
-
-    .progress-bar {
-      stroke: #FF1744;
-      stroke-dasharray: 439.6;
-      stroke-dashoffset: 439.6;
-      animation: loadRing 2.5s linear forwards;
+    
+    .loading-subtext {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      opacity: 0;
+      animation: fadeIn 1s ease 1.5s forwards;
     }
-
-    @keyframes loadRing {
-      to {
-        stroke-dashoffset: 0;
-      }
-    }
-
-    /* Tips Page Styles - Fixed and Non-scrollable */
+    
+    /* Tips Page */
     .tips-page {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: #0c0c0c;
-      font-family: 'Segoe UI', sans-serif;
-      color: #e0e0e0;
+      background: linear-gradient(135deg, #07081f 0%, #0b0c2a 100%);
       display: none;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       padding: 20px;
-      box-sizing: border-box;
-      z-index: 900;
-      overflow: hidden;
-      touch-action: none;
-      animation: fadeInBody 1.2s ease-in-out;
+      z-index: 1001;
+      overflow-y: auto;
     }
-
-    @keyframes fadeInBody {
-      0% { opacity: 0; transform: translateY(20px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-
+    
     .tips-container {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 25px;
       width: 100%;
-      max-width: 400px;
-      background: #161616;
-      padding: 20px;
-      border-radius: 14px;
-      box-shadow: 0 0 30px rgba(255, 23, 68, 0.4);
-      border: 1px solid #2a2a2a;
-      animation: fadeInCard 1.5s ease-in-out;
-      touch-action: none;
+      max-width: 380px;
+      box-shadow: 0 10px 30px rgba(255, 23, 68, 0.3);
+      position: relative;
       overflow: hidden;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInSlide 1s ease 0.3s forwards;
     }
-
-    @keyframes fadeInCard {
-      0% { opacity: 0; transform: scale(0.95); }
-      100% { opacity: 1; transform: scale(1); }
+    
+    .tips-container::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        to bottom right,
+        rgba(255, 23, 68, 0.1) 0%,
+        rgba(255, 23, 68, 0) 60%
+      );
+      transform: rotate(30deg);
+      pointer-events: none;
     }
-
-    h1 {
-      text-align: center;
-      color: #ff1744;
-      font-size: 20px;
-      margin-bottom: 16px;
-      text-shadow: 0 0 6px rgba(255, 23, 68, 0.4);
-      animation: fadeInTitle 1.8s ease-in-out;
+    
+    .tips-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(255, 23, 68, 0.2);
     }
-
-    @keyframes fadeInTitle {
-      0% { opacity: 0; transform: translateY(-10px); }
-      100% { opacity: 1; transform: translateY(0); }
+    
+    .tips-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-right: 15px;
+      flex-shrink: 0;
+      box-shadow: 0 0 10px rgba(255, 23, 68, 0.4);
     }
-
-    .tip {
-      margin-bottom: 14px;
+    
+    .icon-warning {
+      width: 24px;
+      height: 24px;
+      background-color: white;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2L1 21h22L12 2zm0 3.5L19.5 19h-15L12 5.5zM12 16c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1zm-1-4V9h2v3h-2z' fill='white'/%3E%3C/svg%3E") no-repeat center;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2L1 21h22L12 2zm0 3.5L19.5 19h-15L12 5.5zM12 16c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1zm-1-4V9h2v3h-2z' fill='white'/%3E%3C/svg%3E") no-repeat center;
+    }
+    
+    .tips-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--secondary);
+      line-height: 1.3;
+    }
+    
+    .tips-content {
+      margin-bottom: 20px;
+    }
+    
+    .tip-item {
+      display: flex;
+      margin-bottom: 15px;
+      align-items: flex-start;
+      background: rgba(30, 30, 46, 0.6);
       padding: 12px;
-      background-color: #1e1e1e;
-      border-left: 4px solid #ff1744;
-      border-radius: 8px;
-      line-height: 1.6;
-      font-size: 14px;
-      animation: fadeInTip 2s ease-in-out;
-      transition: background-color 0.3s, transform 0.3s;
-    }
-
-    .tip:hover {
-      background-color: #2a2a2a;
-      transform: translateX(5px);
+      border-radius: 10px;
+      border-left: 4px solid var(--secondary);
+      transition: all 0.3s ease;
+      animation: fadeInTip 0.8s ease-out forwards;
     }
 
     @keyframes fadeInTip {
       0% { opacity: 0; transform: translateX(-20px); }
       100% { opacity: 1; transform: translateX(0); }
     }
-
-    .tip strong {
-      color: #ff5252;
+    
+    .tip-item:hover {
+      transform: translateX(5px);
+      background: rgba(40, 40, 60, 0.8);
     }
-
-    .btn-container {
-      text-align: center;
-    }
-
-    .btn {
-      display: inline-block;
-      margin-top: 12px;
-      padding: 10px 22px;
-      background: #ff1744;
-      color: #fff;
-      font-size: 14px;
+    
+    .item-number {
+      width: 24px;
+      height: 24px;
+      background-color: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-right: 12px;
+      flex-shrink: 0;
       font-weight: bold;
+      color: white;
+    }
+    
+    .item-text {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: var(--text-light);
+    }
+    
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 28px;
+      background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
+      color: white;
       border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      box-shadow: 0 0 8px rgba(255, 23, 68, 0.3);
-      transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
-      animation: fadeInTip 2.2s ease-in-out;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
       text-decoration: none;
-      touch-action: manipulation;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(255, 23, 68, 0.3);
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      animation: fadeIn 0.8s ease-out 0.4s forwards;
+      opacity: 0;
     }
-
-    .btn:hover {
-      background: #ff3366;
-      transform: scale(1.03);
+    
+    .button::after {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        to bottom right,
+        rgba(255, 255, 255, 0.3) 0%,
+        rgba(255, 255, 255, 0) 60%
+      );
+      transform: rotate(30deg);
+      transition: all 0.3s ease;
+      opacity: 0;
     }
-
-    .btn:active {
-      box-shadow: 0 0 18px 4px rgba(255, 23, 68, 0.5);
-      transform: scale(1);
+    
+    .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 23, 68, 0.5);
+    }
+    
+    .button:hover::after {
+      opacity: 1;
+    }
+    
+    .button:active {
+      transform: translateY(0);
+    }
+    
+    .button-icon {
+      margin-left: 8px;
+      width: 16px;
+      height: 16px;
+      background-color: white;
+      clip-path: polygon(0% 50%, 40% 50%, 40% 0%, 100% 50%, 40% 100%, 40% 50%);
+    }
+    
+    /* Animations */
+    @keyframes loadRing {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+    
+    @keyframes pulse {
+      0% {
+        transform: translate(-50%, -50%) scale(0.95);
+        opacity: 0.8;
+      }
+      50% {
+        transform: translate(-50%, -50%) scale(1.05);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(0.95);
+        opacity: 0.8;
+      }
+    }
+    
+    @keyframes shine {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1.2);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes fadeInSlide {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   </style>
 </head>
-<body>
-  <!-- Loading Page - Fixed Position -->
-  <div class="loader-page" id="loaderPage">
+<body oncontextmenu="return false">
+
+  <!-- Loading Screen -->
+  <div class="loading-screen">
+    <svg width="0" height="0">
+      <defs>
+        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#ff1744" />
+          <stop offset="100%" stop-color="#d50000" />
+        </linearGradient>
+      </defs>
+    </svg>
+    
     <div class="loader-container">
-      <svg class="progress-ring" width="150" height="150">
-        <circle class="progress-bg" cx="75" cy="75" r="70"/>
-        <circle class="progress-bar" id="progressBar" cx="75" cy="75" r="70"/>
+      <svg class="progress-ring" width="180" height="180">
+        <circle class="progress-bg" cx="90" cy="90" r="85"/>
+        <circle class="progress-bar" cx="90" cy="90" r="85"/>
       </svg>
-      <div class="loader-icon"><i class="fas fa-paper-plane"></i></div>
+      <div class="loader-icon">
+        <i class="fas fa-paper-plane"></i>
+      </div>
     </div>
+    
+    <div class="loading-text">Initializing Predictor</div>
+    <div class="loading-subtext">Loading advanced algorithms...</div>
   </div>
 
-  <!-- Tips Page - Fixed Position -->
-  <div class="tips-page" id="tipsPage">
+  <!-- Tips Page -->
+  <div class="tips-page">
     <div class="tips-container">
-      <h1>Smart Play උපදෙස්</h1>
-
-      <div class="tip">
-        <strong>1.</strong> Signal එක ලැබුණු වේලාවට කලින් 2 ට අඩු (නිල්) Odd 3 කට වඩා තිබේ නම්, බැට් කරන්න එපා.
+      <div class="tips-header">
+        <div class="tips-icon">
+          <div class="icon-warning"></div>
+        </div>
+        <h1 class="tips-title">Smart Play උපදෙස්</h1>
       </div>
-
-      <div class="tip">
-        <strong>2.</strong> Auto Bet සහ Manual Bet එකට එකතු කර ක්‍රීඩා කරන්න.
-        එකම Odd එකකින් දිගින් දිගටම Cash Out කිරීමෙන් වළකින්න.
+      
+      <div class="tips-content">
+        <div class="tip-item" style="animation-delay: 0.1s">
+          <div class="item-number">1</div>
+          <p class="item-text">Signal එක ලැබුණු වේලාවට කලින් 2 ට අඩු (නිල්) Odd 3 කට වඩා තිබේ නම්, බැට් කරන්න එපා.</p>
+        </div>
+        
+        <div class="tip-item" style="animation-delay: 0.2s">
+          <div class="item-number">2</div>
+          <p class="item-text">Auto Bet සහ Manual Bet එකට එකතු කර ක්‍රීඩා කරන්න. එකම Odd එකකින් දිගින් දිගටම Cash Out කිරීමෙන් වළකින්න.</p>
+        </div>
+        
+        <div class="tip-item" style="animation-delay: 0.3s">
+          <div class="item-number">3</div>
+          <p class="item-text">Signal එකට ආසන්නව විනාඩි 1 - 2 ඇතුළත 100+ Odd එකක් තිබේ නම්, එම වේලාවේ බැට් කිරීමේදී අවදානමක් ඇත.</p>
+        </div>
       </div>
-
-      <div class="tip">
-        <strong>3.</strong> Signal එකට ආසන්නව විනාඩි 1 - 2 ඇතුළත 100+ Odd එකක් තිබේ නම්,
-        එම වේලාවේ බැට් කිරීමේදී අවදානමක් ඇත.
-      </div>
-
-      <div class="btn-container">
-        <button class="btn" onclick="goToSignal()">PROCEED TO SIGNAL</button>
-      </div>
+      
+      <button id="proceedBtn" class="button">
+        PROCEED TO SIGNAL
+        <div class="button-icon"></div>
+      </button>
     </div>
   </div>
 
   <script>
-    // Prevent all unwanted interactions
-    document.addEventListener('gesturestart', function(e) {
+    // Disable all text selection
+    document.addEventListener('selectstart', function(e) {
       e.preventDefault();
+      return false;
     });
-    
+
+    // Disable copy/paste/cut
     document.addEventListener('copy', function(e) {
       e.preventDefault();
+      return false;
     });
     
     document.addEventListener('cut', function(e) {
       e.preventDefault();
+      return false;
     });
     
     document.addEventListener('paste', function(e) {
       e.preventDefault();
+      return false;
     });
 
-    // Disable scrolling completely
-    document.addEventListener('touchmove', function(e) {
+    // Disable zooming and other unwanted gestures
+    document.addEventListener('gesturestart', function(e) {
       e.preventDefault();
+    });
+
+    document.addEventListener('touchmove', function(e) {
+      if (e.scale !== 1) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    // Disable keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+      // Disable Ctrl+C, Ctrl+X, Ctrl+V, Ctrl+A
+      if ((e.ctrlKey || e.metaKey) && ['c', 'x', 'v', 'a'].includes(e.key.toLowerCase())) {
+        e.preventDefault();
+        return false;
+      }
+      
+      // Disable F12 (DevTools)
+      if (e.key === 'F12') {
+        e.preventDefault();
+        return false;
+      }
+      
+      // Disable zooming with Ctrl+/-/0
+      if ((e.ctrlKey || e.metaKey) && ['+', '-', '0'].includes(e.key)) {
+        e.preventDefault();
+        return false;
+      }
+    });
+
+    // Prevent zooming with pinch gestures on touch devices
+    document.addEventListener('wheel', function(e) {
+      if (e.ctrlKey) {
+        e.preventDefault();
+      }
     }, { passive: false });
 
     // After loading animation completes, show tips page
-    document.getElementById("progressBar").addEventListener("animationend", function() {
-      document.getElementById("loaderPage").style.display = "none";
-      document.getElementById("tipsPage").style.display = "flex";
+    setTimeout(() => {
+      document.querySelector('.loading-screen').style.display = 'none';
+      document.querySelector('.tips-page').style.display = 'flex';
+    }, 3500);
+
+    // Handle proceed button click - replace history to prevent back navigation
+    document.getElementById('proceedBtn').addEventListener('click', function() {
+      // Add click animation
+      this.classList.add('clicked');
+      
+      // Replace current history state
+      window.history.replaceState(null, null, window.location.href);
+      
+      // Redirect without adding to history
+      setTimeout(() => {
+        window.location.replace("https://damindu817.github.io/xtreme_aviator_predictor_Pro_1xbet/");
+      }, 300);
     });
 
-    function goToSignal() {
-      // Replace current page completely so it won't appear in history
-      window.location.replace("https://damindu817.github.io/xtreme_aviator_predictor_Pro_1xbet/");
-    }
-
-    // Ensure the page doesn't show in browser history when navigating back
-    window.addEventListener('pageshow', function(event) {
-      if (event.persisted) {
-        window.location.replace("https://damindu817.github.io/xtreme_aviator_predictor_Pro_1xbet/");
-      }
+    // Additional protection against right-click menu
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+      return false;
     });
   </script>
 </body>
